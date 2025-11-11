@@ -68,120 +68,120 @@ class TG_Admin {
      * Hiển thị nội dung meta box
      */
     public function render_meta_box( $post ) {
-    wp_nonce_field( 'tg_save_giftcard_meta', 'tg_giftcard_nonce' );
+        wp_nonce_field( 'tg_save_giftcard_meta', 'tg_giftcard_nonce' );
 
-    $fields = [
-        'gift_card_code'   => get_post_meta( $post->ID, '_tg_gift_card_code', true ),
-        'status'           => get_post_meta( $post->ID, '_tg_status', true ),
-        'expire_date'      => get_post_meta( $post->ID, '_tg_expire_date', true ),
-        'limit_per_user'   => get_post_meta( $post->ID, '_tg_limit_per_user', true ),
-        'max_amount'       => get_post_meta( $post->ID, '_tg_max_amount', true ),
-        'specific_courses' => get_post_meta( $post->ID, '_tg_specific_courses', true ),
-        'excluded_courses' => get_post_meta( $post->ID, '_tg_excluded_courses', true ),
-        'allow_all_courses'=> get_post_meta( $post->ID, '_tg_allow_all_courses', true ),
-        'max_courses'      => get_post_meta( $post->ID, '_tg_max_courses', true ),
-    ];
-    ?>
+        $fields = [
+            'gift_card_code'   => get_post_meta( $post->ID, '_tg_gift_card_code', true ),
+            'status'           => get_post_meta( $post->ID, '_tg_status', true ),
+            'expire_date'      => get_post_meta( $post->ID, '_tg_expire_date', true ),
+            'limit_per_user'   => get_post_meta( $post->ID, '_tg_limit_per_user', true ),
+            'max_amount'       => get_post_meta( $post->ID, '_tg_max_amount', true ),
+            'specific_courses' => get_post_meta( $post->ID, '_tg_specific_courses', true ),
+            'excluded_courses' => get_post_meta( $post->ID, '_tg_excluded_courses', true ),
+            'allow_all_courses'=> get_post_meta( $post->ID, '_tg_allow_all_courses', true ),
+            'max_courses'      => get_post_meta( $post->ID, '_tg_max_courses', true ),
+        ];
+        ?>
 
-    <style>
-        .tg-meta-section {
-            background: #f9fafc;
-            border: 1px solid #e2e4e7;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            padding: 10px 15px;
-        }
-        .tg-meta-section h3 {
-            margin-top: 0;
-            color: #1d2327;
-            border-bottom: 1px solid #dcdfe4;
-            padding-bottom: 5px;
-        }
-        .tg-meta-table th {
-            width: 200px;
-            vertical-align: top;
-            padding-top: 10px;
-        }
-        .tg-meta-table input[type="text"],
-        .tg-meta-table input[type="number"],
-        .tg-meta-table input[type="date"] {
-            width: 100%;
-            max-width: 320px;
-        }
-        .tg-meta-table input[type="checkbox"] {
-            transform: scale(1.2);
-            margin-right: 6px;
-        }
-        @media (max-width: 782px) {
-            .tg-meta-table th { width: auto; display: block; }
-            .tg-meta-table td { display: block; }
-        }
-    </style>
+        <style>
+            .tg-meta-section {
+                background: #f9fafc;
+                border: 1px solid #e2e4e7;
+                border-radius: 6px;
+                margin-bottom: 15px;
+                padding: 10px 15px;
+            }
+            .tg-meta-section h3 {
+                margin-top: 0;
+                color: #1d2327;
+                border-bottom: 1px solid #dcdfe4;
+                padding-bottom: 5px;
+            }
+            .tg-meta-table th {
+                width: 200px;
+                vertical-align: top;
+                padding-top: 10px;
+            }
+            .tg-meta-table input[type="text"],
+            .tg-meta-table input[type="number"],
+            .tg-meta-table input[type="date"] {
+                width: 100%;
+                max-width: 320px;
+            }
+            .tg-meta-table input[type="checkbox"] {
+                transform: scale(1.2);
+                margin-right: 6px;
+            }
+            @media (max-width: 782px) {
+                .tg-meta-table th { width: auto; display: block; }
+                .tg-meta-table td { display: block; }
+            }
+        </style>
 
-    <!-- 🧾 Thông tin cơ bản -->
-    <div class="tg-meta-section">
-        <h3>🧾 Thông tin cơ bản</h3>
-        <table class="form-table tg-meta-table">
-            <tr>
-                <th><label for="tg_gift_card_code">Mã thẻ</label></th>
-                <td><input type="text" name="tg_gift_card_code" value="<?php echo esc_attr($fields['gift_card_code']); ?>" placeholder="VD: ABC123"></td>
-            </tr>
-            <tr>
-                <th><label for="tg_status">Trạng thái</label></th>
-                <td>
-                    <select name="tg_status" id="tg_status">
-                        <option value="active" <?php selected($fields['status'], 'active'); ?>>Kích hoạt</option>
-                        <option value="inactive" <?php selected($fields['status'], 'inactive'); ?>>Tạm dừng</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="tg_expire_date">Ngày hết hạn</label></th>
-                <td><input type="date" name="tg_expire_date" value="<?php echo esc_attr($fields['expire_date']); ?>"></td>
-            </tr>
-            <tr>
-                <th><label for="tg_limit_per_user">Giới hạn / user</label></th>
-                <td><input type="number" name="tg_limit_per_user" value="<?php echo esc_attr($fields['limit_per_user']); ?>" placeholder="0 = không giới hạn"></td>
-            </tr>
-        </table>
-    </div>
+        <!-- 🧾 Thông tin cơ bản -->
+        <div class="tg-meta-section">
+            <h3>🧾 Thông tin cơ bản</h3>
+            <table class="form-table tg-meta-table">
+                <tr>
+                    <th><label for="tg_gift_card_code">Mã thẻ</label></th>
+                    <td><input type="text" name="tg_gift_card_code" value="<?php echo esc_attr($fields['gift_card_code']); ?>" placeholder="VD: ABC123"></td>
+                </tr>
+                <tr>
+                    <th><label for="tg_status">Trạng thái</label></th>
+                    <td>
+                        <select name="tg_status" id="tg_status">
+                            <option value="active" <?php selected($fields['status'], 'active'); ?>>Kích hoạt</option>
+                            <option value="inactive" <?php selected($fields['status'], 'inactive'); ?>>Tạm dừng</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="tg_expire_date">Ngày hết hạn</label></th>
+                    <td><input type="date" name="tg_expire_date" value="<?php echo esc_attr($fields['expire_date']); ?>"></td>
+                </tr>
+                <tr>
+                    <th><label for="tg_limit_per_user">Giới hạn / user</label></th>
+                    <td><input type="number" name="tg_limit_per_user" value="<?php echo esc_attr($fields['limit_per_user']); ?>" placeholder="0 = không giới hạn"></td>
+                </tr>
+            </table>
+        </div>
 
-    <!-- 🎯 Điều kiện áp dụng -->
-    <div class="tg-meta-section">
-        <h3>🎯 Điều kiện áp dụng</h3>
-        <table class="form-table tg-meta-table">
-            <tr>
-                <th><label for="tg_allow_all_courses">Áp dụng cho tất cả khóa học</label></th>
-                <td><label><input type="checkbox" name="tg_allow_all_courses" value="1" <?php checked($fields['allow_all_courses'], '1'); ?>> Có, áp dụng toàn bộ</label></td>
-            </tr>
-            <tr>
-                <th><label for="tg_max_amount">Giới hạn giá khóa học (VNĐ)</label></th>
-                <td><input type="number" name="tg_max_amount" value="<?php echo esc_attr($fields['max_amount']); ?>" placeholder="0 = không giới hạn"></td>
-            </tr>
-            <tr>
-                <th><label for="tg_specific_courses">Danh sách khóa học cố định</label></th>
-                <td><input type="text" name="tg_specific_courses" value="<?php echo esc_attr($fields['specific_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
-            </tr>
-            <tr>
-                <th><label for="tg_excluded_courses">Khóa học <span style='color:red;'>không áp dụng</span></label></th>
-                <td><input type="text" name="tg_excluded_courses" value="<?php echo esc_attr($fields['excluded_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
-            </tr>
-        </table>
-    </div>
+        <!-- 🎯 Điều kiện áp dụng -->
+        <div class="tg-meta-section">
+            <h3>🎯 Điều kiện áp dụng</h3>
+            <table class="form-table tg-meta-table">
+                <tr>
+                    <th><label for="tg_allow_all_courses">Áp dụng cho tất cả khóa học</label></th>
+                    <td><label><input type="checkbox" name="tg_allow_all_courses" value="1" <?php checked($fields['allow_all_courses'], '1'); ?>> Có, áp dụng toàn bộ</label></td>
+                </tr>
+                <tr>
+                    <th><label for="tg_max_amount">Giới hạn giá khóa học (VNĐ)</label></th>
+                    <td><input type="number" name="tg_max_amount" value="<?php echo esc_attr($fields['max_amount']); ?>" placeholder="0 = không giới hạn"></td>
+                </tr>
+                <tr>
+                    <th><label for="tg_specific_courses">Danh sách khóa học cố định</label></th>
+                    <td><input type="text" name="tg_specific_courses" value="<?php echo esc_attr($fields['specific_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
+                </tr>
+                <tr>
+                    <th><label for="tg_excluded_courses">Khóa học <span style='color:red;'>không áp dụng</span></label></th>
+                    <td><input type="text" name="tg_excluded_courses" value="<?php echo esc_attr($fields['excluded_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
+                </tr>
+            </table>
+        </div>
 
-    <!-- 🎁 Giới hạn khóa học -->
-    <div class="tg-meta-section">
-        <h3>🎁 Giới hạn khóa học có thể nhận</h3>
-        <table class="form-table tg-meta-table">
-            <tr>
-                <th><label for="tg_max_courses">Số lượng tối đa</label></th>
-                <td><input type="number" name="tg_max_courses" value="<?php echo esc_attr($fields['max_courses'] ?: 1); ?>"></td>
-            </tr>
-        </table>
-    </div>
+        <!-- 🎁 Giới hạn khóa học -->
+        <div class="tg-meta-section">
+            <h3>🎁 Giới hạn khóa học có thể nhận</h3>
+            <table class="form-table tg-meta-table">
+                <tr>
+                    <th><label for="tg_max_courses">Số lượng tối đa</label></th>
+                    <td><input type="number" name="tg_max_courses" value="<?php echo esc_attr($fields['max_courses'] ?: 1); ?>"></td>
+                </tr>
+            </table>
+        </div>
 
-    <?php
-}
+        <?php
+    }
 
 
     /**
@@ -228,7 +228,8 @@ class TG_Admin {
     public function render_custom_columns( $column, $post_id ) {
         switch ( $column ) {
             case 'status':
-                echo esc_html( get_post_meta( $post_id, '_tg_status', true ) );
+                $_status = get_post_meta( $post_id, '_tg_status', true );
+                echo esc_html( $_status == "active" ? "Hoạt động" : $_status );
                 break;
             case 'expire':
                 echo esc_html( get_post_meta( $post_id, '_tg_expire_date', true ) );
