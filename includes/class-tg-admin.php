@@ -68,6 +68,11 @@ class TG_Admin {
      * Hiển thị nội dung meta box
      */
     public function render_meta_box( $post ) {
+        $course_selection_component = plugin_dir_path( __FILE__ ) . '../components/course-selection.php';
+        if ( file_exists( $course_selection_component ) ) {
+            include $course_selection_component;
+        }
+
         wp_nonce_field( 'tg_save_giftcard_meta', 'tg_giftcard_nonce' );
 
         $fields = [
@@ -158,14 +163,53 @@ class TG_Admin {
                     <th><label for="tg_max_amount">Giới hạn giá khóa học (VNĐ)</label></th>
                     <td><input type="number" name="tg_max_amount" value="<?php echo esc_attr($fields['max_amount']); ?>" placeholder="0 = không giới hạn"></td>
                 </tr>
+               
                 <tr>
                     <th><label for="tg_specific_courses">Danh sách khóa học cố định</label></th>
-                    <td><input type="text" name="tg_specific_courses" value="<?php echo esc_attr($fields['specific_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
+                    <td>
+                        <?php
+                            // Chuỗi shortcode bạn muốn gọi
+                            $shortcode_string = '[tg_course_selector field_name="tg_specific_courses"]';
+
+                            // Gọi hàm do_shortcode() để xử lý chuỗi và lấy kết quả HTML
+                            $course_selector_html = do_shortcode( $shortcode_string );
+
+                            // In HTML ra màn hình
+                            echo $course_selector_html;
+
+                            // Ví dụ đầy đủ nếu bạn muốn truyền thêm tham số 'selected'
+                            /*
+                            $selected_ids = "10,25,30"; 
+                            $shortcode_with_selected = '[tg_course_selector field_name="tg_specific_courses" selected="' . esc_attr($selected_ids) . '"]';
+                            echo do_shortcode( $shortcode_with_selected );
+                            */
+                        ?>
+                    </td>
                 </tr>
+
                 <tr>
-                    <th><label for="tg_excluded_courses">Khóa học <span style='color:red;'>không áp dụng</span></label></th>
-                    <td><input type="text" name="tg_excluded_courses" value="<?php echo esc_attr($fields['excluded_courses']); ?>" placeholder="ID, cách nhau bằng dấu phẩy"></td>
+                    <th><label for="tg_excluded_courses">Khóa học không áp dụng</label></th>
+                    <td>
+                        <?php
+                            // Chuỗi shortcode bạn muốn gọi
+                            $shortcode_string = '[tg_course_selector field_name="tg_excluded_courses"]';
+
+                            // Gọi hàm do_shortcode() để xử lý chuỗi và lấy kết quả HTML
+                            $course_selector_html = do_shortcode( $shortcode_string );
+
+                            // In HTML ra màn hình
+                            echo $course_selector_html;
+
+                            // Ví dụ đầy đủ nếu bạn muốn truyền thêm tham số 'selected'
+                            /*
+                            $selected_ids = "10,25,30"; 
+                            $shortcode_with_selected = '[tg_course_selector field_name="tg_excluded_courses" selected="' . esc_attr($selected_ids) . '"]';
+                            echo do_shortcode( $shortcode_with_selected );
+                            */
+                        ?>
+                    </td>
                 </tr>
+
             </table>
         </div>
 

@@ -6,6 +6,8 @@ class TG_Shortcodes {
         add_shortcode('tutor_giftcards', [__CLASS__, 'render_user_giftcards']);
         add_shortcode('tutor_giftcard_claim', [__CLASS__, 'render_claim_form']);
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
+
+        add_shortcode( 'tg_course_selector', [__CLASS__, 'tg_course_selector_shortcode'] );
     }
 
     public static function enqueue_assets(){
@@ -120,4 +122,95 @@ class TG_Shortcodes {
         <?php
         return ob_get_clean();
     }
+
+
+    public function tg_get_all_courses(array $args = array() ): array {
+        $default_args = array(
+            'post_type'      => 'courses',
+            'post_status'    => 'publish',
+            'no_found_rows'  => true,
+            'posts_per_page' => -1,
+        );
+
+        $query_args = wp_parse_args( $args, $default_args );
+        $query = new \WP_Query( $query_args );
+
+        $posts = $query->have_posts() ? $query->posts : [];
+        wp_reset_postdata();
+
+        return $posts;
+    }
+
+    /**
+     * Hiển thị component chọn khóa học (multiple select) cho admin.
+     *
+     * @param string $field_name       Tên input (dùng cho thuộc tính 'name').
+     * @param array  $selected_courses Array các Course ID đã được chọn.
+     * @return void
+     */
+    public function tg_course_select_component( string $field_name, array $selected_courses = array() ): void {
+        // Lấy tất cả khóa học
+        $courses = $this->tg_get_all_courses();
+        
+        ?>
+
+        <select 
+            name="<?php echo esc_attr($field_name); ?>[]" 
+            multiple 
+            style="width:100%; min-height:120px; padding:4px; box-sizing:border-box;"
+        >
+            <?php if ( !empty($courses) ) : ?>
+                <?php foreach ($courses as $course) :
+                    // Kiểm tra xem khóa học hiện tại có nằm trong danh sách đã chọn hay không
+                    $is_selected = in_array( (int)$course->ID, array_map('intval', $selected_courses) );
+                    $selected_attr = $is_selected ? 'selected' : '';
+                ?>
+                    <option value="<?php echo esc_attr($course->ID); ?>" <?php echo $selected_attr; ?>>
+                        <?php echo esc_html($course->post_title); ?>
+                    </option>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <option value="">Không có khóa học nào</option>
+            <?php endif; ?>
+        </select>
+        <p style="margin:3px 0 0 0; font-size:12px; color:#555;">
+            Giữ **Ctrl** (Windows) hoặc **Cmd** (Mac) để chọn nhiều khóa học.
+        </p>
+
+        <?php
+    }
+
+    /**
+     * Shortcode callback để hiển thị component chọn khóa học.
+     *
+     * Shortcode: [tg_course_selector]
+     *
+     * @param array $atts Các thuộc tính của shortcode.
+     * @return string HTML của component.
+     */
+    public static function tg_course_selector_shortcode( $atts ) {
+        $atts = shortcode_atts(
+            array(
+                'field_name' => 'selected_courses', // Tên trường mặc định
+                'selected'   => '',                 // Danh sách ID đã chọn (ví dụ: "1,2,3")
+            ),
+            $atts,
+            'tg_course_selector'
+        );
+
+        // Xử lý chuỗi ID đã chọn thành mảng
+        $selected_courses_array = ! empty( $atts['selected'] ) ? array_map( 'intval', explode( ',', $atts['selected'] ) ) : array();
+
+        $instance = new self();
+
+        // Bắt đầu buffer để "bắt" output HTML từ hàm component
+        ob_start();
+
+        $instance->tg_course_select_component( $atts['field_name'], $selected_courses_array );
+
+        // Lấy nội dung buffer và trả về dưới dạng chuỗi
+        return ob_get_clean();
+    }
+
+
 }
