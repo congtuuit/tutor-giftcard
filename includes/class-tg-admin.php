@@ -123,6 +123,9 @@ class TG_Admin {
                 margin-right: 6px;
             }
 
+            .select2-container {
+                max-width: 600px !important;
+            }
             .select2-container--default .select2-selection--multiple .select2-selection__choice,
                 .select2-container--default .select2-selection--single .select2-selection__rendered {
                     max-width: 100%;
