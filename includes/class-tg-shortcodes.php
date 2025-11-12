@@ -18,6 +18,26 @@ class TG_Shortcodes {
             'rest_url' => rest_url('tutor-giftcard/v1/'),
             'nonce'    => wp_create_nonce('tg_frontend_nonce'),
         ]);
+
+        wp_enqueue_style( 'select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
+        wp_enqueue_script( 'select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', ['jquery'], null, true );
+
+        // Kích hoạt Select2 cho các select có class .tg-course-select
+        wp_add_inline_script( 'select2-js', "
+            jQuery(document).ready(function($){
+                $('.tg-course-select').select2({
+                    placeholder: 'Chọn khóa học...',
+                    allowClear: true,
+                    width: '100%',
+                    language: {
+                        noResults: function() {
+                            return 'Không tìm thấy khóa học nào';
+                        }
+                    }
+                });
+            });
+        " );
+        
     }
 
     /**
@@ -157,15 +177,13 @@ class TG_Shortcodes {
         <select 
             name="<?php echo esc_attr($field_name); ?>[]" 
             multiple 
-            style="width:100%; min-height:120px; padding:4px; box-sizing:border-box;"
+            class="tg-course-select"
         >
             <?php if ( !empty($courses) ) : ?>
                 <?php foreach ($courses as $course) :
-                    // Kiểm tra xem khóa học hiện tại có nằm trong danh sách đã chọn hay không
                     $is_selected = in_array( (int)$course->ID, array_map('intval', $selected_courses) );
-                    $selected_attr = $is_selected ? 'selected' : '';
                 ?>
-                    <option value="<?php echo esc_attr($course->ID); ?>" <?php echo $selected_attr; ?>>
+                    <option value="<?php echo esc_attr($course->ID); ?>" <?php selected( $is_selected ); ?>>
                         <?php echo esc_html($course->post_title); ?>
                     </option>
                 <?php endforeach; ?>
@@ -174,7 +192,7 @@ class TG_Shortcodes {
             <?php endif; ?>
         </select>
         <p style="margin:3px 0 0 0; font-size:12px; color:#555;">
-            Giữ **Ctrl** (Windows) hoặc **Cmd** (Mac) để chọn nhiều khóa học.
+            Có thể gõ tên khóa học để tìm kiếm nhanh.
         </p>
 
         <?php
