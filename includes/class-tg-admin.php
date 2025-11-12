@@ -277,13 +277,6 @@ class TG_Admin {
                     width: '100%',
                     language: {
                         noResults: function() { return 'Không tìm thấy khóa học nào'; }
-                    },
-                    templateResult: function (data) {
-                        if (!data.id) return data.text;
-                        return $('<span title="' + data.text + '">' + data.text + '</span>');
-                    },
-                    templateSelection: function (data) {
-                        return $('<span title="' + data.text + '">' + data.text + '</span>');
                     }
                 });
             });
