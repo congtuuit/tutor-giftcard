@@ -122,6 +122,33 @@ class TG_Admin {
                 transform: scale(1.2);
                 margin-right: 6px;
             }
+
+            .select2-container--default .select2-selection--multiple .select2-selection__choice,
+                .select2-container--default .select2-selection--single .select2-selection__rendered {
+                    max-width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .select2-results__option {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .select2-results__option[title]:hover::after {
+                    content: attr(title);
+                    position: absolute;
+                    background: #333;
+                    color: #fff;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    white-space: normal;
+                    z-index: 9999;
+                }
+
+
             @media (max-width: 782px) {
                 .tg-meta-table th { width: auto; display: block; }
                 .tg-meta-table td { display: block; }
@@ -247,6 +274,13 @@ class TG_Admin {
                     width: '100%',
                     language: {
                         noResults: function() { return 'Không tìm thấy khóa học nào'; }
+                    }
+                    templateResult: function (data) {
+                        if (!data.id) return data.text;
+                        return $('<span title="' + data.text + '">' + data.text + '</span>');
+                    },
+                    templateSelection: function (data) {
+                        return $('<span title="' + data.text + '">' + data.text + '</span>');
                     }
                 });
             });

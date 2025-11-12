@@ -167,9 +167,9 @@ class TG_Shortcodes {
                         <?php echo esc_html($course->post_title); ?>
                     </option>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <option value="">Không có khóa học nào</option>
-            <?php endif; ?>
+                <?php else: ?>
+                    <option value="">Không có khóa học nào</option>
+                <?php endif; ?>
         </select>
         <p style="margin:3px 0 0 0; font-size:12px; color:#555;">
             Có thể gõ tên khóa học để tìm kiếm nhanh.
