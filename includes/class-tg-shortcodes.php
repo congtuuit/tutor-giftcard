@@ -164,7 +164,13 @@ class TG_Shortcodes {
                     $is_selected = in_array( (int)$course->ID, array_map('intval', $selected_courses) );
                 ?>
                     <option value="<?php echo esc_attr($course->ID); ?>" <?php selected( $is_selected ); ?>>
-                        <?php echo esc_html($course->post_title); ?>
+                        <?php
+                            $title = $course->post_title;
+                            if ( mb_strlen($title) > 100 ) {
+                                $title = mb_substr($title, 0, 100) . '…';
+                            }
+                            echo esc_html($title);
+                            ?>
                     </option>
                 <?php endforeach; ?>
                 <?php else: ?>
