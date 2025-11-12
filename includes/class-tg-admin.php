@@ -170,31 +170,38 @@ class TG_Admin {
                 </tr>
                
                 <tr>
-                    <th><label for="tg_specific_courses">Danh sách khóa học cố định</label></th>
-                    <td>
-                        <?php
-                            // Chuỗi shortcode bạn muốn gọi
-                            $shortcode_string = '[tg_course_selector field_name="tg_specific_courses"]';
+                    <th colspan="2" style="padding: 10px 0;">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <label for="tg_specific_courses" style="font-weight: 600; margin-bottom: 2px;">
+                                Danh sách khóa học cố định
+                            </label>
+                            <?php
+                                // Chuỗi shortcode bạn muốn gọi
+                                $shortcode_string = '[tg_course_selector field_name="tg_specific_courses"]';
 
-                            // Gọi hàm do_shortcode() để xử lý chuỗi và lấy kết quả HTML
-                            $course_selector_html = do_shortcode( $shortcode_string );
+                                // Gọi hàm do_shortcode() để xử lý chuỗi và lấy kết quả HTML
+                                $course_selector_html = do_shortcode( $shortcode_string );
 
-                            // In HTML ra màn hình
-                            echo $course_selector_html;
+                                // In HTML ra màn hình
+                                echo $course_selector_html;
 
-                            // Ví dụ đầy đủ nếu bạn muốn truyền thêm tham số 'selected'
-                            /*
-                            $selected_ids = "10,25,30"; 
-                            $shortcode_with_selected = '[tg_course_selector field_name="tg_specific_courses" selected="' . esc_attr($selected_ids) . '"]';
-                            echo do_shortcode( $shortcode_with_selected );
-                            */
-                        ?>
-                    </td>
+                                // Ví dụ đầy đủ nếu bạn muốn truyền thêm tham số 'selected'
+                                /*
+                                $selected_ids = "10,25,30"; 
+                                $shortcode_with_selected = '[tg_course_selector field_name="tg_specific_courses" selected="' . esc_attr($selected_ids) . '"]';
+                                echo do_shortcode( $shortcode_with_selected );
+                                */
+                            ?>
+                        </div>
+                    </th>
                 </tr>
 
                 <tr>
-                    <th><label for="tg_excluded_courses">Khóa học không áp dụng</label></th>
-                    <td>
+                   <th colspan="2" style="padding: 10px 0;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="tg_excluded_courses" style="font-weight: 600; margin-bottom: 2px;">
+                            Khóa học không áp dụng
+                        </label>
                         <?php
                             // Chuỗi shortcode bạn muốn gọi
                             $shortcode_string = '[tg_course_selector field_name="tg_excluded_courses"]';
@@ -212,7 +219,9 @@ class TG_Admin {
                             echo do_shortcode( $shortcode_with_selected );
                             */
                         ?>
-                    </td>
+                        </div>
+
+                    </th>
                 </tr>
 
             </table>
