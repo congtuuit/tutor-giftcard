@@ -1,0 +1,342 @@
+
+/* ------------------ assets/css/tg-redeem.css ------------------ */
+
+/* minimal styles, you can expand */
+.tg-course-grid .tg-course-item-card{background:#fff}
+.tg-selected-box .tg-selected-row{background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee}
+
+
+.tg-course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+}
+
+/* Overlay full (center) */
+#tg-spinner-overlay{
+  position: fixed; /* or absolute if you want inside container */
+  inset: 0;
+  background: rgba(255,255,255,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index: 9999;
+}
+
+/* Spinner (SVG-like) */
+.tg-spinner{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  border:6px solid rgba(0,0,0,0.08);
+  border-top-color: rgba(0,0,0,0.55);
+  animation: tg-spin 1s linear infinite;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Inline small spinner */
+.tg-spinner-inline{
+  display:inline-block;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:3px solid rgba(0,0,0,0.08);
+  border-top-color: rgba(0,0,0,0.55);
+  animation: tg-spin 1s linear infinite;
+  vertical-align: middle;
+  margin-left:6px;
+}
+
+/* Keyframes */
+@keyframes tg-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* --- Pagination Styles --- */
+
+/* Container bọc ngoài */
+.tg-pagination {
+    margin-top: 20px;
+    text-align: center;
+    /* Sử dụng flexbox để căn chỉnh các nút đẹp hơn */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px; /* Khoảng cách giữa các nút */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; /* Font chuẩn của WP */
+}
+
+/* Kiểu nút bấm chung */
+.tg-page-btn {
+    padding: 8px 14px;
+    border: 1px solid #ccd0d4; /* Màu viền chuẩn của WP */
+    border-radius: 4px;
+    background-color: #f6f7f7;
+    color: #0073aa; /* Màu xanh chủ đạo của WP */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+}
+
+/* Hiệu ứng khi rê chuột (hover) */
+.tg-page-btn:hover:not(.disabled) {
+    background-color: #f0f0f1;
+    border-color: #0073aa;
+    color: #0073aa;
+}
+
+/* Nút được chọn (trang hiện tại) */
+.tg-page-btn.active {
+    background-color: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+    cursor: default;
+}
+
+/* Nút bị vô hiệu hóa (Trang đầu/cuối) */
+.tg-page-btn.disabled {
+    color: #a7aaad;
+    background-color: #f6f7f7;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Dấu ba chấm "..." */
+.tg-page-ellipsis {
+    padding: 8px 6px;
+    color: #50575e;
+}
+
+/* --- General Font --- */
+.tg-info-box, .tg-search-panel {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* --- Info Box Styles (tg-info-box) --- */
+.tg-info-box {
+    background-color: #f6f7f7; /* Màu nền xám nhạt của WP */
+    border: 1px solid #ccd0d4; /* Viền chuẩn của WP */
+    
+    /* Tạo một đường nhấn màu xanh bên trái giống thông báo của WP */
+    border-left: 4px solid #0073aa; 
+    
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #3c434a; /* Màu chữ tiêu chuẩn */
+}
+
+/* Tiêu đề <h3> bên trong info box */
+.tg-info-heading {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #1d2327; /* Màu tiêu đề của WP */
+}
+
+/* Mỗi dòng thông tin */
+.tg-info-row {
+    margin-bottom: 8px;
+}
+.tg-info-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Chữ in đậm (label) */
+.tg-info-box strong {
+    color: #1d2327;
+    margin-right: 5px;
+}
+
+/* Class tiện ích để ẩn element */
+.tg-hidden-info {
+    display: none;
+}
+
+
+/* --- Search Panel Styles (tg-search-panel) --- */
+.tg-search-panel {
+    display: flex;
+    gap: 8px; /* Khoảng cách giữa ô input và nút */
+    margin-bottom: 15px;
+    
+    /* Căn chỉnh ô input và nút cho thẳng hàng */
+    align-items: center; 
+}
+
+/* Ô input tìm kiếm */
+#tg-search-input {
+    flex: 1; /* Cho phép ô input co giãn lấp đầy không gian */
+    padding: 8px 12px;
+    border: 1px solid #8c8f94; /* Viền ô input chuẩn của WP */
+    border-radius: 4px;
+    font-size: 14px;
+    
+    /* Hiệu ứng chuyển động mượt */
+    transition: all 0.15s ease-in-out;
+}
+
+/* Hiệu ứng khi focus (click) vào ô input */
+#tg-search-input:focus {
+    border-color: #0073aa; /* Viền chuyển màu xanh */
+    box-shadow: 0 0 0 1px #0073aa; /* Thêm vòng sáng (shadow) */
+    outline: none; /* Tắt viền outline mặc định của trình duyệt */
+}
+
+/* * Nút tìm kiếm (id="tg-search-btn")
+ * Chúng ta đã thêm class "button" và "button-primary" của WordPress,
+ * nên nó sẽ tự động có giao diện nút màu xanh chuẩn của WP.
+ * Bạn gần như không cần style gì thêm cho nó.
+ */
+ /* --- Search Panel Styles (tg-search-panel) --- */
+.tg-search-panel {
+    display: flex;
+    gap: 8px; /* Khoảng cách giữa ô input và nút */
+    margin-bottom: 15px;
+    
+    /* Căn chỉnh ô input và nút cho thẳng hàng */
+    align-items: center; 
+}
+
+/* Ô input tìm kiếm */
+#tg-search-input {
+    flex: 1; /* Cho phép ô input co giãn lấp đầy không gian */
+    padding: 8px 12px;
+    border: 1px solid #8c8f94; /* Viền ô input chuẩn của WP */
+    border-radius: 4px;
+    font-size: 14px;
+    
+    /* Hiệu ứng chuyển động mượt */
+    transition: all 0.15s ease-in-out;
+}
+
+/* Hiệu ứng khi focus (click) vào ô input */
+#tg-search-input:focus {
+    border-color: #0073aa; /* Viền chuyển màu xanh */
+    box-shadow: 0 0 0 1px #0073aa; /* Thêm vòng sáng (shadow) */
+    outline: none; /* Tắt viền outline mặc định của trình duyệt */
+}
+
+/* * Nút #tg-search-btn đã dùng class .button và .button-primary
+ * của WordPress, nên nó sẽ tự động có giao diện nút màu xanh
+ * chuẩn mà không cần chúng ta style thêm.
+ */
+ /* --- WordPress Button Styles (cho Front-end) --- */
+
+/* Style cơ bản cho .button */
+.button {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 14px; /* Tăng 1px cho dễ đọc ở front-end */
+    line-height: 1.8;
+    min-height: 36px; /* Chiều cao tối thiểu */
+    margin: 0;
+    padding: 4px 14px; /* Padding trên/dưới và trái/phải */
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px; /* Giống với input của bạn */
+    white-space: nowrap;
+    box-sizing: border-box;
+    
+    /* Màu mặc định (giống nút xám) */
+    background: #f6f7f7;
+    border-color: #8c8f94;
+    color: #3c434a;
+    transition: all 0.15s ease-in-out;
+}
+
+/* Hiệu ứng khi rê chuột (hover) cho nút thường */
+.button:hover {
+    background: #f0f0f1;
+    border-color: #0073aa;
+    color: #0073aa;
+}
+
+/* * NÚT CHÍNH (MÀU XANH) 
+ * Đây chính là class .button-primary của bạn
+ */
+.button.button-primary {
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+}
+
+/* Hover/Focus cho nút chính */
+.button.button-primary:hover,
+.button.button-primary:focus {
+    background: #006697; /* Màu xanh đậm hơn một chút */
+    border-color: #006697;
+    color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #0073aa;
+}
+
+/* Style khi focus (tab) cho nút thường */
+.button:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    outline: none;
+}
+
+/* --- Wrapper và Tiêu đề --- */
+.tg-giftcard-wrapper {
+    margin-top: 30px;
+}
+
+.tg-giftcard-list-heading {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #3c434a;
+    margin-bottom: 20px;
+}
+
+/* --- Thiết kế cho từng thẻ quà tặng --- */
+.tg-giftcard-item {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid #ff9800; /* Màu nhấn Cam/Vàng nổi bật */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Thêm chiều sâu */
+}
+
+.tg-giftcard-title {
+    font-size: 1.1em;
+    color: #1d2327;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+/* --- Phần Footer (Mã và Nút) --- */
+.tg-giftcard-footer {
+    display: flex;
+    justify-content: space-between; /* Đẩy mã sang trái, nút sang phải */
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px dashed #eee;
+    margin-top: 10px;
+    flex-wrap: wrap; /* Đảm bảo bố cục tốt trên mobile */
+    gap: 10px;
+}
+
+.tg-giftcard-code {
+    font-weight: bold;
+    color: #0073aa; /* Màu xanh nổi bật */
+    padding: 4px 8px;
+    background: #f0f8ff; /* Nền xanh nhạt */
+    border-radius: 4px;
+    font-family: monospace;
+    margin-right: 10px;
+}
+
+/* Style cho nút sau khi đã copy (tạo feedback trực quan) */
+.tg-copy-btn.copied {
+    background-color: #28a745 !important; /* Màu xanh lá (thành công) */
+    border-color: #28a745 !important;
+    color: #fff !important;
+}

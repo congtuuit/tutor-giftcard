@@ -3,68 +3,56 @@ if ( ! defined('ABSPATH') ) exit;
 
 class TG_Shortcodes {
     public static function init(){
-        add_shortcode('tutor_giftcards', [__CLASS__, 'render_user_giftcards']);
-        add_shortcode('tutor_giftcard_claim', [__CLASS__, 'render_claim_form']);
+        add_shortcode('tutor_giftcards', [__CLASS__, 'render_user_giftcards']); // trang quà belong to user
+
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
 
         add_shortcode( 'tg_course_selector', [__CLASS__, 'tg_course_selector_shortcode'] );
+
+        add_shortcode('tg_course_giftcards', [__CLASS__, 'render_course_giftcards']);
+
     }
 
     public static function enqueue_assets(){
-        wp_enqueue_style('tg-frontend-css', plugins_url('../assets/css/frontend.css', __FILE__));
-        wp_enqueue_script('tg-frontend-js', plugins_url('../assets/js/frontend.js', __FILE__), ['jquery'], false, true);
-        wp_localize_script('tg-frontend-js', 'TG_Ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'rest_url' => rest_url('tutor-giftcard/v1/'),
-            'nonce'    => wp_create_nonce('tg_frontend_nonce'),
-        ]);
+        wp_enqueue_style('tg-frontend-css', plugins_url('../assets/css/frontend.css', __FILE__), array(), "1.2");
+        wp_enqueue_script('tg-frontend-js', plugins_url('../assets/js/frontend.js', __FILE__), ['jquery'], "1.0", true);
+       
     }
 
     /**
      * Hiển thị danh sách thẻ quà tặng người dùng sở hữu
      */
-    public static function render_user_giftcards($atts){
+    public static function render_user_giftcards($atts) {
         if (!is_user_logged_in()) {
-            return '<p>Bạn cần đăng nhập để xem thẻ quà tặng.</p>';
+            return '<p>Bạn cần <a href="' . wp_login_url(get_permalink()) . '">đăng nhập</a> để xem thẻ quà tặng.</p>';
         }
 
         $user_id = get_current_user_id();
+        //$giftcards = TG_Utils::get_giftcards_by_user($user_id);
+        $giftcards = TG_Utils::get_giftcards_by_user_include_tgid($user_id);
 
-        // Các thẻ user đã claim (lưu ID thẻ trong user_meta)
-        $user_cards = get_user_meta($user_id, '_tg_user_cards', true);
-        if (empty($user_cards) || !is_array($user_cards)) {
+        if (empty($giftcards)) {
             return '<p>Bạn chưa có thẻ quà tặng nào.</p>';
         }
 
-        $args = [
-            'post_type' => 'tutor_giftcard',
-            'post__in'  => $user_cards,
-            'post_status' => 'publish',
-            'orderby' => 'date',
-            'order' => 'DESC',
-        ];
-
-        $query = new WP_Query($args);
-
-        if (!$query->have_posts()) {
-            return '<p>Không có thẻ quà tặng nào hợp lệ.</p>';
-        }
-
         ob_start();
-        echo '<div class="tg-card-list">';
-        while ($query->have_posts()) {
-            $query->the_post();
-            $post_id = get_the_ID();
 
-            $code           = get_post_meta($post_id, '_tg_gift_card_code', true);
-            $status         = get_post_meta($post_id, '_tg_status', true);
-            $expire_date    = get_post_meta($post_id, '_tg_expire_date', true);
-            $limit_user     = get_post_meta($post_id, '_tg_limit_per_user', true);
-            $max_amount     = get_post_meta($post_id, '_tg_max_amount', true);
-            $allow_all      = get_post_meta($post_id, '_tg_allow_all_courses', true);
-            $specific       = get_post_meta($post_id, '_tg_specific_courses', true);
-            $excluded       = get_post_meta($post_id, '_tg_excluded_courses', true);
-            $max_courses    = get_post_meta($post_id, '_tg_max_courses', true) ?: 1;
+        echo '<div><h1>Thẻ quà tặng của bạn</h1></div>';
+        echo '<div class="tg-card-list" style="display:grid;gap:20px;">';
+
+        foreach ($giftcards as $item) {
+            $post_id = $item['post']->ID;
+
+            $record_id = $item['record_id']; // ID trong bảng tg_giftcard_users
+            $used      = $item['used'];
+            $used_at   = $item['used_at'];
+
+            $title        = get_the_title($post_id);
+            $desc         = get_the_excerpt($post_id);
+            $code         = get_post_meta($post_id, '_tg_gift_card_code', true);
+            $expire_date  = get_post_meta($post_id, '_tg_expire_date', true);
+            $conditions   = get_post_meta($post_id, '_tg_conditions', true);
+            $status       = get_post_meta($post_id, '_tg_status', true) ?: 'active';
 
             // Kiểm tra hạn sử dụng
             $now = date('Y-m-d');
@@ -72,57 +60,48 @@ class TG_Shortcodes {
                 $status = 'expired';
             }
 
-            // Hiển thị
-            ?>
-            <div class="tg-card <?php echo esc_attr($status); ?>">
-                <h3><?php echo esc_html(get_the_title()); ?></h3>
-                <p class="tg-desc"><?php echo esc_html(get_the_excerpt()); ?></p>
+            if ($used) {
+                $status = 'Đã sử dụng';
+            }
 
-                <ul class="tg-meta">
+            $_expire_date = new DateTime($expire_date);
+
+            // Link đổi quà
+            $redeem_link = add_query_arg(
+                [
+                    'tg_code' => rawurlencode($code),
+                    'tg_id'   => rawurlencode($post_id), // hoặc giá trị khác nếu cần
+                    'tg_gcid' => rawurlencode($record_id), // ID trong bảng tg_user_giftcards
+                ],
+                site_url('/redeem-giftcard')
+            );
+            ?>
+            <div class="tg-card <?php echo esc_attr($status); ?>" style="border:1px solid #e0e0e0;padding:20px;border-radius:12px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.05);margin-bottom:16px;">
+                <h3 style="margin:0 0 12px;font-size:1.25rem;color:#333;"><?php echo esc_html($title); ?></h3>
+                
+                <?php if ($desc): ?>
+                    <p style="margin:0 0 12px;color:#555;font-size:0.95rem;"><?php echo esc_html($desc); ?></p>
+                <?php endif; ?>
+                
+                <ul style="list-style:none;padding:0;margin:0 0 16px;color:#555;font-size:0.95rem;">
                     <li><strong>Mã thẻ:</strong> <?php echo esc_html($code); ?></li>
-                    <li><strong>Trạng thái:</strong> <?php echo $status === 'active' ? 'Kích hoạt' : ($status === 'expired' ? 'Hết hạn' : 'Tạm dừng'); ?></li>
-                    <li><strong>Ngày hết hạn:</strong> <?php echo $expire_date ?: 'Không giới hạn'; ?></li>
-                    <li><strong>Giới hạn mỗi user:</strong> <?php echo $limit_user ?: 'Không giới hạn'; ?></li>
-                    <li><strong>Giá khóa học tối đa:</strong> <?php echo $max_amount ? number_format($max_amount, 0, ',', '.') . ' VNĐ' : 'Không giới hạn'; ?></li>
-                    <li><strong>Số khóa học tối đa được đổi:</strong> <?php echo intval($max_courses); ?></li>
+                    <li><strong>Ngày hết hạn:</strong> <?php echo $_expire_date->format('d/m/Y') ?: 'Không giới hạn'; ?></li>
+                    <li><strong>Điều kiện sử dụng:</strong> <?php echo $conditions ? esc_html($conditions) : 'Không có điều kiện đặc biệt.'; ?></li>
                 </ul>
 
                 <?php if ($status === 'active'): ?>
-                    <?php
-                    $redeem_link = add_query_arg('tg_code', rawurlencode($code), site_url('/redeem-giftcard'));
-                    ?>
-                    <a class="tg-btn" href="<?php echo esc_url($redeem_link); ?>">🎁 Đổi quà</a>
+                    <a class="tg-btn" href="<?php echo esc_url($redeem_link); ?>" style="display:inline-block;background:#2f8f2f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:500;transition:all 0.2s ease;">🎁 Đổi quà</a>
                 <?php else: ?>
-                    <button class="tg-btn disabled" disabled>Không thể đổi</button>
+                    <button class="tg-btn" disabled style="background:#ccc;padding:10px 18px;border-radius:8px;color:#666;font-weight:500;border:none;">Hết hạn</button>
                 <?php endif; ?>
             </div>
+
             <?php
         }
+
         echo '</div>';
-        wp_reset_postdata();
-
         return ob_get_clean();
     }
-
-    /**
-     * Form claim thẻ quà tặng bằng code
-     */
-    public static function render_claim_form($atts){
-        if (!is_user_logged_in()) {
-            return '<p>Bạn cần đăng nhập để claim thẻ.</p>';
-        }
-
-        ob_start(); ?>
-        <form id="tg-claim-form" class="tg-claim-form">
-            <label>Nhập mã thẻ quà tặng:</label>
-            <input type="text" name="tg_code" required placeholder="Nhập mã thẻ..." />
-            <button type="submit">Claim thẻ</button>
-            <div id="tg-claim-result"></div>
-        </form>
-        <?php
-        return ob_get_clean();
-    }
-
 
     public function tg_get_all_courses(array $args = array() ): array {
         $default_args = array(
@@ -195,26 +174,76 @@ class TG_Shortcodes {
     public static function tg_course_selector_shortcode( $atts ) {
         $atts = shortcode_atts(
             array(
-                'field_name' => 'selected_courses', // Tên trường mặc định
-                'selected'   => '',                 // Danh sách ID đã chọn (ví dụ: "1,2,3")
+                'field_name'   => 'selected_courses', // Tên trường mặc định
+                'selected_ids' => array(),            // Danh sách ID đã chọn (mảng)
             ),
             $atts,
             'tg_course_selector'
         );
 
-        // Xử lý chuỗi ID đã chọn thành mảng
-        $selected_courses_array = ! empty( $atts['selected'] ) ? array_map( 'intval', explode( ',', $atts['selected'] ) ) : array();
+        // Nếu là chuỗi, chuyển thành mảng int
+        if (!empty($atts['selected_ids']) && is_string($atts['selected_ids'])) {
+            $selected_courses_array = array_map('intval', explode(',', $atts['selected_ids']));
+        } elseif (!empty($atts['selected_ids']) && is_array($atts['selected_ids'])) {
+            $selected_courses_array = array_map('intval', $atts['selected_ids']);
+        } else {
+            $selected_courses_array = [];
+        }
+
+        // Chỉ để debug, bạn có thể xóa dòng này nếu không cần
+        //echo json_encode($selected_courses_array);
 
         $instance = new self();
 
-        // Bắt đầu buffer để "bắt" output HTML từ hàm component
+        // Bắt đầu buffer để lấy output HTML
         ob_start();
+        $instance->tg_course_select_component($atts['field_name'], $selected_courses_array);
 
-        $instance->tg_course_select_component( $atts['field_name'], $selected_courses_array );
-
-        // Lấy nội dung buffer và trả về dưới dạng chuỗi
         return ob_get_clean();
     }
 
+    
+
+    public static function render_course_giftcards() {
+        $course_id = get_the_ID();
+        $giftcard_courses = TG_Utils::get_giftcard_courses_by_course($course_id);
+
+        if (empty($giftcard_courses)) {
+            return '';
+        }
+
+        $html = '<div class="tg-giftcard-wrapper">';
+        $html .= '<h2 class="tg-giftcard-list-heading">🎁 Các Thẻ Quà Tặng Áp Dụng</h2>';
+
+        foreach ($giftcard_courses as $rec) {
+            $giftcard_id = (int) $rec['giftcard_id'];
+            $post = get_post($giftcard_id);
+
+            if (!$post) continue;
+
+            // Lấy Mã code từ post meta (dữ liệu duy nhất có sẵn ngoài tiêu đề)
+            $code = get_post_meta($giftcard_id, '_tg_code', true);
+            $link = get_permalink($giftcard_id);
+
+            $html .= '<div class="tg-giftcard-item">';
+            $html .= '<h3 class="tg-giftcard-title"><a target="_blank" href="'.$link.'">' . esc_html($post->post_title) . '</a></h3>';
+            
+            if ($code) {
+                $html .= '<div class="tg-giftcard-footer">';
+                $html .= '<strong>Mã Áp Dụng:</strong> <span class="tg-giftcard-code">' . esc_html($code) . '</span>';
+                // Thêm nút và sử dụng class .button .button-primary
+                $html .= '<button class="tg-copy-btn button button-primary" data-code="' . esc_attr($code) . '">Sao chép Mã</button>';
+                $html .= '</div>'; // .tg-giftcard-footer
+            }
+
+            $html .= "<span>Khi mua khóa học sẽ tặng kèm</span>"; // spacer
+
+            $html .= '</div>'; // .tg-giftcard-item
+        }
+
+        $html .= '</div>'; // .tg-giftcard-wrapper
+
+        return $html;
+    }
 
 }
